@@ -29,7 +29,12 @@ public class MainActivity extends AppCompatActivity {
     String name;
     EditText named;
     String displayName;
-    DatabaseReference myRef;
+    DatabaseReference nameRef;
+    DatabaseReference ageRef;
+    DatabaseReference genderRef;
+
+
+
 
 
     @Override
@@ -52,14 +57,14 @@ public class MainActivity extends AppCompatActivity {
                     // Name, email address, and profile photo Url
                     name = user.getDisplayName();
                     String email = user.getEmail();
-//                        Uri photoUrl = user.getPhotoUrl();
-                    named = (EditText) findViewById(R.id.name);
-                    displayName = named.getText().toString();
+//                   Uri photoUrl = user.getPhotoUrl();
 
-                    myRef = database.getReference(uid).child("UserInfo");
+                    nameRef = database.getReference(uid).child("name");
+                    ageRef = database.getReference(uid).child("age");
+                    genderRef = database.getReference(uid).child("gender");
 
                     // Read from the database
-                    myRef.addValueEventListener(new ValueEventListener() {
+                    nameRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // This method is called once with the initial value and again
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                             String value = dataSnapshot.getValue(String.class);
                             Log.d(TAG, "Value is: " + value);
                             TextView textView = (TextView) findViewById(R.id.CurrentName);
-                            textView.setText(value);
+                                textView.setText(value);
 
                         }
 
@@ -77,6 +82,45 @@ public class MainActivity extends AppCompatActivity {
                             Log.w(TAG, "Failed to read value.", error.toException());
                         }
                     });
+                    ageRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // This method is called once with the initial value and again
+                            // whenever data at this location is updated.
+                            String value = dataSnapshot.getValue(String.class);
+                            Log.d(TAG, "Value is: " + value);
+                            TextView textView = (TextView) findViewById(R.id.CurrentAge);
+                                textView.setText(value);
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
+                    genderRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // This method is called once with the initial value and again
+                            // whenever data at this location is updated.
+                            String value = dataSnapshot.getValue(String.class);
+                            Log.d(TAG, "Value is: " + value);
+                            TextView textView = (TextView) findViewById(R.id.CurrentGender);
+
+                                textView.setText(value);
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
+
 
 
                     // Check if user's email is verified
@@ -91,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                     Intent intent = new Intent(MainActivity.this, UserInfo.class);
                     startActivity(intent);
+                    finish();
                 }
                 // ...
             }
@@ -136,15 +181,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void updateName(View view) {
-        EditText updatedNameEditText = (EditText) findViewById(R.id.name);
-        String newName = updatedNameEditText.getText().toString();
-        updatedNameEditText.setText(newName);
-        myRef.setValue(newName);
-        TextView shownName = (TextView) findViewById(R.id.CurrentName);
-        shownName.setText(newName);
-        updatedNameEditText.setText("");
 
-
+    public void profileEditLaunch(View view) {
+        Intent profile= new Intent(this, profileEdit.class);
+        startActivity(profile);
     }
 }
